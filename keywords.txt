@@ -12,33 +12,21 @@ getAddress	KEYWORD2
 setALSMode	KEYWORD2
 setUVSMode	KEYWORD2
 reset	KEYWORD2
-enable	KEYWORD2
-disable	KEYWORD2
-
-setResolution	KEYWORD2
-getResolution	KEYWORD2
-setRate	KEYWORD2
-getRate	KEYWORD2
-setGain	KEYWORD2
-getGain	KEYWORD2
 
 getPartID	KEYWORD2
 getRevisionID	KEYWORD2
 
-getStatus	KEYWORD2
-
 getALSData	KEYWORD2
+getLUX	KEYWORD2
 getUVSData	KEYWORD2
+getUVI	KEYWORD2
 
-setInterruptConfig	KEYWORD2
-getInterruptConfig	KEYWORD2
-setInterruptPersist	KEYWORD2
-getInterruptPersist	KEYWORD2
+setGain	KEYWORD2
+getGain	KEYWORD2
 
-setHighThreshold	KEYWORD2
-getHighThreshold	KEYWORD2
-setLowThreshold	KEYWORD2
-getLowThreshold	KEYWORD2
+setMeasurement	KEYWORD2
+getResolution	KEYWORD2
+getTime	KEYWORD2
 
 
 # Constants (LITERAL1)

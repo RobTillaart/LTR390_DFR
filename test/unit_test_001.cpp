@@ -22,7 +22,6 @@
 
 #include <ArduinoUnitTests.h>
 
-
 #include "LTR390_DFR.h"
 
 
@@ -41,7 +40,7 @@ unittest(test_constructor)
 {
   LTR390_DFR dev;
 
-  assertEqual(dev.getAddress(), 0x1C);
+  assertEqual(0x1C, dev.getAddress());
 }
 
 

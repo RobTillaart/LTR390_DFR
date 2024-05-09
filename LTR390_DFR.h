@@ -56,7 +56,6 @@ public:
 
   bool begin()
   {
-
     return isConnected();
   }
 
@@ -98,13 +97,13 @@ public:
   //
   //  PART_ID
   //
-  uint8_t getPartID()   // 0xB ?
+  uint8_t getPartID()
   {
     uint8_t reg = readRegister(LTR390_PART_ID);
     return reg >> 4;
   }
 
-  uint8_t getRevisionID()  //  0x02 ?
+  uint8_t getRevisionID()
   {
     uint8_t reg = readRegister(LTR390_PART_ID);
     return reg & 0x0F;
@@ -120,7 +119,6 @@ public:
     return readRegister(8) * 65536UL + readRegister(7);
   }
 
-
   //  page 22 datasheet
   float getLux(float wfac = 1)
   {
@@ -128,7 +126,6 @@ public:
     if (wfac > 1) lux *= wfac;
     return lux;
   }
-
 
   uint32_t getUVSData()
   {
@@ -150,7 +147,7 @@ public:
   //
   //  experimental...
   //
-  //  does not work as expected yet
+  //  TODO does not work as expected yet
   //
   void setGain(uint8_t gain)  //  0..4
   {
@@ -170,8 +167,8 @@ public:
     return reg & 0x07;
   }
 
-  //  reso = 0..5  See datasheet P14.
-  //  time = 0..7  See datasheet P14.
+  //  resolution = 0..5  See datasheet P14.
+  //        time = 0..7  See datasheet P14.
   void setMeasurement(uint8_t resolution, uint8_t time)
   {
     uint16_t value = (resolution << 4) | time;
@@ -185,13 +182,11 @@ public:
     if (time == 5) _time = 1.000;
   }
 
-
   uint8_t getResolution()
   {
     uint16_t reg = readRegister(LTR390_ALS_UVS_MEAS_RATE);
     return (reg >> 4) & 0x07;
   }
-
 
   uint8_t getTime()
   {
@@ -204,9 +199,9 @@ public:
   //////////////////////////////////////////////
   //
   //  MAIN STATUS
-  //  TODO elaborate
+  //  TODO elaborate - need split? or masks?
   //
-  uint8_t getStatus()  //  need split? or masks?
+  uint8_t getStatus()
   {
     uint8_t reg = readRegister(LTR390_MAIN_STATUS);
     return reg & 0x38;
@@ -266,7 +261,6 @@ public:
     return value;
   }
 
-
   void setLowThreshold(uint32_t value)
   {
     writeRegister(LTR390_ALS_UVS_THRES_LOW_0, value & 0xFF);
@@ -288,10 +282,10 @@ public:
 */
 
 
-//////////////////////////////////////////////
-//
-//  PRIVATE  TODO move.
-//
+  //////////////////////////////////////////////
+  //
+  //  PRIVATE  TODO move.
+  //
   int writeRegister(uint8_t reg, uint16_t value)
   {
     _wire->beginTransmission(_address);
@@ -301,8 +295,8 @@ public:
     int n = _wire->endTransmission();
     if (n != 0)
     {
-      Serial.print("write:\t");
-      Serial.println(n);
+      //  Serial.print("write:\t");
+      //  Serial.println(n);
     }
     return n;
   }
@@ -315,27 +309,28 @@ public:
     int n = _wire->endTransmission();
     if (n != 0)
     {
-      Serial.print("read:\t");
-      Serial.println(n);
+      //  Serial.print("read:\t");
+      //  Serial.println(n);
       return n;
     }
 
     n = _wire->requestFrom(_address, (uint8_t)2);
-    if (n == 2)
+    if (n != 2)
     {
-      uint16_t data = _wire->read();
-      return data + _wire->read() * 256;
+      //  Serial.print("requestFrom: \t");
+      //  Serial.print(n);
+      return n;
     }
-    Serial.print("requestFrom: \t");
-    Serial.print(n);
-    return n;
+    uint16_t data = _wire->read();
+    return data + _wire->read() * 256;
   }
 
 
 private:
   TwoWire * _wire;
   uint8_t _address;
-  //  for lux math
+
+  //  for LUX math
   float   _gain;
   float   _time;
   float   _UVsensitivity;

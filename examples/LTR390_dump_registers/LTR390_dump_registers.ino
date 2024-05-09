@@ -10,13 +10,16 @@
 
 LTR390_DFR uv;
 
+
 void setup()
 {
   Serial.begin(115200);
   Serial.println();
   Serial.println(__FILE__);
+  Serial.println();
   Serial.print("LTR390_DFR_LIB_VERSION: ");
   Serial.println(LTR390_DFR_LIB_VERSION);
+  Serial.println();
 
   Wire.begin();
   Wire.setClock(100000);
@@ -31,7 +34,6 @@ void setup()
   }
 
   //  register range according to DFrobotics
-
   for (uint8_t reg = 0x00; reg < 0x14; reg++)
   {
     Serial.print(reg, HEX);

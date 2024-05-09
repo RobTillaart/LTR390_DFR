@@ -16,20 +16,23 @@ Arduino library for the I2C LTR390 UV sensor (DF Robotics edition).
 
 ## Description
 
-Experimental
+**Experimental**
 
-This library 
+This library is to read the LTR390 UV sensor on the DF Robotics
+break-out board.
 
-Operating voltage range: 3.0 - 5.0 V (tolerant).
-
+Operating voltage range: **3.0V .. 5.0V** (tolerant).
 
 
 ## I2C
 
-The device should work on 100 Khz and 400 Khz I2C bus.
+The break-out has an address of 0x1C == 28 decimal.
 
-Fixed address of 0x53 == 83 decimal according to datasheet.
-However 0x1C / 28 was found with I2C scanner.
+#### I2C Speed
+
+The device should work on 100 kHz and 400 kHz I2C bus.
+
+To be tested.
 
 
 #### Multiplexing
@@ -65,17 +68,27 @@ too if they are behind the multiplexer.
 
 #### Constructor
 
-- **LTR390_DFR(TwoWire \* wire = &Wire)** 
-- **bool begin()**
-- **bool isConnected()** returns true if address is seen on I2C bus.
-- **uint8_t getAddress()**
+- **LTR390_DFR(TwoWire \* wire = &Wire)** Constructor 
+with optional Wire interface.
+- **bool begin()** returns true if device 0x1C can be seen on the I2C bus.
+- **bool isConnected()** returns true if device 0x1C can be seen on I2C bus.
+- **uint8_t getAddress()** returns 0x1C, fixed address, for convenience.
 
 
 #### Main control
 
 - **void setALSMode()**
 - **void setUVSMode()**
-- **void reset()**
+- **void reset()** blocks for 100 ms.
+
+
+#### Measurement configuration
+
+- **void setGain(uint8_t gain)** gain = 0..4,
+- **uint8_t getGain()** returns set value.
+- **void setMeasurement(uint8_t resolution, uint8_t time)**
+- **uint8_t getResolution()**
+- **uint8_t getTime()**
 
 
 #### Part and revision ID
@@ -84,64 +97,35 @@ too if they are behind the multiplexer.
 - **uint8_t getRevisionID()** returns 2.
 
 
-#### Measurement configuration
-
-- **void setResolution(uint8_t res)**  //  0..5
-- **uint8_t getResolution()**
-- **void setRate(uint8_t rate)**  //  0..7
-- **uint8_t getRate()**
-- **void setGain(uint8_t gain)**  //  0..4
-- **uint8_t getGain()**
-
-
-
-#### Main status
-
-- **uint8_t getStatus()**  need split? or masks?
-
 #### Get data
 
 - **uint32_t getALSData()**
+- **float getLUX(float wfac = 1)** wfac = window factor,
 - **uint32_t getUVSData()**
-
-
-#### Interrupt
-
-- **int setInterruptConfig(uint8_t value)**
-- **uint8_t getInterruptConfig()**
-- **int setInterruptPersist(uint8_t value)**
-- **uint8_t getInterruptPersist()**
-
-#### Threshold
-
-- **void setHighThreshold(uint32_t value)**
-- **uint32_t getHighThreshold()**
-- **void setLowThreshold(uint32_t value)**
-- **uint32_t getLowThreshold()**
+- **float getUVI(float wfac = 1)** wfac = window factor,
 
 
 ## Future
 
 #### Must
 
-- improve documentation
-- test with hardware
+- Elaborate and improve documentation a lot.
+  - add tables, ranges etc.
+- test with right hardware.
 - keep in sync with LTR390_RT when possible
 
 #### Should
 
 - add examples
-- fix / elaborate TODO's
-- test setGain()
-- test setIntegrationTime()
+- fix / elaborate TODO's in code.
+  - status and error codes
+  - interrupts and thresholds
 - add setUVsensitivity()
-
 
 #### Could
 
 - add error handling
 - unit test ==> test examples
-
 
 #### Wont
 
