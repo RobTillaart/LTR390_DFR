@@ -247,7 +247,7 @@ public:
   //
   uint8_t getStatus()
   {
-    uint8_t reg = readRegister(LTR390_MAIN_STATUS);  ?
+    uint8_t reg = readRegister(LTR390_MAIN_STATUS);  ? no such register.
     return reg & 0x38;
   }
 
@@ -281,40 +281,30 @@ public:
   //
   //  THRESHOLD
   //
+  //  note registers are 16 bit.
+  //
   void setHighThreshold(uint32_t value = 0x000FFFFF)
   {
-    writeRegister(LTR390_ALS_UVS_THRES_UP_0, value & 0xFF);
-    value >>= 8;
-    writeRegister(LTR390_ALS_UVS_THRES_UP_1, value & 0xFF);
-    value >>= 8;
-    writeRegister(LTR390_ALS_UVS_THRES_UP_2, value & 0x0F);
+    writeRegister(LTR390_ALS_UVS_THRES_UP_0, value & 0xFFFF);
+    writeRegister(LTR390_ALS_UVS_THRES_UP_1, value >> 16);
   }
 
   uint32_t getHighThreshold()
   {
-    uint32_t value = readRegister(LTR390_ALS_UVS_THRES_UP_2) & 0x0F;
-    value <<= 8;
-    value += readRegister(LTR390_ALS_UVS_THRES_UP_1);
-    value <<= 8;
+    uint32_t value = readRegister(LTR390_ALS_UVS_THRES_UP_1) << 16;
     value += readRegister(LTR390_ALS_UVS_THRES_UP_0);
     return value;
   }
 
   void setLowThreshold(uint32_t value = 0)
   {
-    writeRegister(LTR390_ALS_UVS_THRES_LOW_0, value & 0xFF);
-    value >>= 8;
-    writeRegister(LTR390_ALS_UVS_THRES_LOW_1, value & 0xFF);
-    value >>= 8;
-    writeRegister(LTR390_ALS_UVS_THRES_LOW_2, value & 0x0F);
+    writeRegister(LTR390_ALS_UVS_THRES_LOW_0, value & 0xFFFF);
+    writeRegister(LTR390_ALS_UVS_THRES_LOW_1, value >> 16);
   }
 
   uint32_t getLowThreshold()
   {
-    uint32_t value = readRegister(LTR390_ALS_UVS_THRES_LOW_2) & 0x0F;
-    value <<= 8;
-    value += readRegister(LTR390_ALS_UVS_THRES_LOW_1);
-    value <<= 8;
+    uint32_t value = readRegister(LTR390_ALS_UVS_THRES_LOW_1) << 16;
     value += readRegister(LTR390_ALS_UVS_THRES_LOW_0);
     return value;
   }
