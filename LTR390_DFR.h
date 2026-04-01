@@ -115,8 +115,8 @@ public:
   //
   [[nodiscard]] uint32_t getALSData()
   {
-    uint32_t raw = readRegister(LTR390Reg::ALS_DATA_1) * 65536UL;
-    raw += readRegister(LTR390Reg::ALS_DATA_0);
+    uint32_t raw = static_cast<uint32_t>(readRegister(LTR390Reg::ALS_DATA_1)) << 16;
+    raw |= readRegister(LTR390Reg::ALS_DATA_0);
     return raw;
   }
 
@@ -131,8 +131,8 @@ public:
 
   [[nodiscard]] uint32_t getUVSData()
   {
-    uint32_t raw = readRegister(LTR390Reg::UVS_DATA_1) * 65536UL;
-    raw += readRegister(LTR390Reg::UVS_DATA_0);
+    uint32_t raw = static_cast<uint32_t>(readRegister(LTR390Reg::UVS_DATA_1)) << 16;
+    raw |= readRegister(LTR390Reg::UVS_DATA_0);
     return raw;
   }
 
