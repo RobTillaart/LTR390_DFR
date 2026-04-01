@@ -45,8 +45,8 @@ class LTR390_DFR
 {
 public:
   explicit LTR390_DFR(TwoWire *wire = &Wire):
-    _address(0x1C), //  Fixed 0x1C = 28 = DF_ROBOTICS
     _wire(wire),
+    _address(0x1C), //  Fixed 0x1C = 28 = DF_ROBOTICS
     _gain(3.0f), //  default
     _time(0.1f), //  default 18 bit, 100 ms.
     _UVsensitivity(1.0f)
