@@ -131,8 +131,8 @@ public:
 
   [[nodiscard]] uint32_t getUVSData()
   {
-    uint32_t raw = static_cast<uint32_t>(readRegister(LTR390Reg::UVS_DATA_1)) << 16;
-    raw |= readRegister(LTR390Reg::UVS_DATA_0);
+    uint32_t raw = readRegister(LTR390Reg::UVS_DATA_1) * 65536UL;
+    raw += readRegister(LTR390Reg::UVS_DATA_0);
     return raw;
   }
 
@@ -149,22 +149,15 @@ public:
   //
   //  MEASUREMENT CONFIGURATION
   //
-  uint8_t setGain(uint8_t gain = 1) //  0..4
+  uint8_t setGain(uint8_t gain = 1)
   {
-    uint16_t value = gain;
-    if (value > 4)
-      value = 4;
-    writeRegister(LTR390Reg::GAIN, value);
-    _gain = 1;
-    if (value == 1)
-      _gain = 3;
-    else if (value == 2)
-      _gain = 6;
-    else if (value == 3)
-      _gain = 9;
-    else if (value == 4)
-      _gain = 18;
-    return value;
+    constexpr uint8_t gainTable[] = {1, 3, 6, 9, 18};    
+    if (gain > 4)
+      gain = 4;
+
+    writeRegister(LTR390Reg::GAIN, gain);
+    _gain = gainTable[gain];
+    return gain;
   }
 
   [[nodiscard]] uint8_t getGain()
