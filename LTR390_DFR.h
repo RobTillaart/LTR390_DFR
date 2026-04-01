@@ -52,18 +52,18 @@ public:
     _UVsensitivity(1.0f)
   {}
 
-  bool begin()
+  [[nodiscard]] bool begin()
   {
     return isConnected();
   }
 
-  bool isConnected()
+  [[nodiscard]] bool isConnected()
   {
     _wire->beginTransmission(_address);
     return (_wire->endTransmission() == 0);
   }
 
-  uint8_t getAddress()
+  [[nodiscard]] uint8_t getAddress()
   {
     return _address;
   }
@@ -86,7 +86,7 @@ public:
     writeRegister(LTR390Reg::MAIN_CTRL, raw);
   }
 
-  uint8_t reset()
+  [[nodiscard]] uint8_t reset()
   {
     writeRegister(LTR390Reg::MAIN_CTRL, 0x10);
     delay(100);
@@ -97,13 +97,13 @@ public:
   //
   //  PART_ID
   //
-  uint8_t getPartID()
+  [[nodiscard]] uint8_t getPartID()
   {
     uint8_t reg = readRegister(LTR390Reg::PART_ID);
     return reg >> 4;
   }
 
-  uint8_t getRevisionID()
+  [[nodiscard]] uint8_t getRevisionID()
   {
     uint8_t reg = readRegister(LTR390Reg::PART_ID);
     return reg & 0x0F;
@@ -113,7 +113,7 @@ public:
   //
   //  GET DATA
   //
-  uint32_t getALSData()
+  [[nodiscard]] uint32_t getALSData()
   {
     uint32_t raw = readRegister(LTR390Reg::ALS_DATA_1) * 65536UL;
     raw += readRegister(LTR390Reg::ALS_DATA_0);
@@ -121,7 +121,7 @@ public:
   }
 
   //  page 22 datasheet
-  float getLux(float wfac = 1)
+  [[nodiscard]] float getLux(float wfac = 1)
   {
     float lux = 0.6f * getALSData() / (_gain * _time);
     if (wfac > 1)
@@ -129,7 +129,7 @@ public:
     return lux;
   }
 
-  uint32_t getUVSData()
+  [[nodiscard]] uint32_t getUVSData()
   {
     uint32_t raw = readRegister(LTR390Reg::UVS_DATA_1) * 65536UL;
     raw += readRegister(LTR390Reg::UVS_DATA_0);
@@ -137,7 +137,7 @@ public:
   }
 
   //  page 22 datasheet
-  float getUVI(float wfac = 1.0f)
+  [[nodiscard]] float getUVI(float wfac = 1.0f)
   {
     float uvi = getUVSData() / _UVsensitivity;
     if (wfac > 1.0f)
@@ -167,7 +167,7 @@ public:
     return value;
   }
 
-  uint8_t getGain()
+  [[nodiscard]] uint8_t getGain()
   {
     uint16_t reg = readRegister(LTR390Reg::GAIN);
     return reg & 0x07;
@@ -175,7 +175,7 @@ public:
 
   //  resolution = 0..5  See datasheet P14.
   //        time = 0..7  See datasheet P14.
-  bool setMeasurement(uint8_t resolution, uint8_t time)
+  [[nodiscard]] bool setMeasurement(uint8_t resolution, uint8_t time)
   {
     if (resolution > 5)
       return false;
@@ -201,19 +201,19 @@ public:
     return true;
   }
 
-  uint8_t getResolution()
+  [[nodiscard]] uint8_t getResolution()
   {
     uint16_t reg = readRegister(LTR390Reg::ALS_UVS_MEAS_RATE);
     return (reg >> 4) & 0x07;
   }
 
-  uint8_t getTime()
+  [[nodiscard]] uint8_t getTime()
   {
     uint16_t reg = readRegister(LTR390Reg::ALS_UVS_MEAS_RATE);
     return reg & 0x07;
   }
 
-  bool setUVsensitivity(float s)
+  [[nodiscard]] bool setUVsensitivity(float s)
   {
     if ((s <= 0.0f) || (s > 1.0f))
       return false;
@@ -221,7 +221,7 @@ public:
     return true;
   }
 
-  float getUVsensitivity()
+  [[nodiscard]] float getUVsensitivity()
   {
     return _UVsensitivity;
   }
@@ -324,7 +324,7 @@ public:
   //
   //  PRIVATE
   //
-  int writeRegister(uint8_t reg, uint16_t value)
+  [[nodiscard]] int writeRegister(uint8_t reg, uint16_t value)
   {
     _wire->beginTransmission(_address);
     _wire->write(reg);
@@ -340,7 +340,7 @@ public:
     return n;
   }
 
-  uint16_t readRegister(uint8_t reg)
+  [[nodiscard]] uint16_t readRegister(uint8_t reg)
   {
     _wire->beginTransmission(_address);
     _wire->write(reg);
