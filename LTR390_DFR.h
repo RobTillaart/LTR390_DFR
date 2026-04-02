@@ -76,19 +76,19 @@ public:
   {
     uint8_t raw = readRegister(LTR390Reg::MAIN_CTRL);
     raw &= ~0x08;
-    writeRegister(LTR390Reg::MAIN_CTRL, raw);
+    (void)writeRegister(LTR390Reg::MAIN_CTRL, raw);
   }
 
   void setUVSMode()
   {
     uint8_t raw = readRegister(LTR390Reg::MAIN_CTRL);
     raw |= 0x08;
-    writeRegister(LTR390Reg::MAIN_CTRL, raw);
+    (void)writeRegister(LTR390Reg::MAIN_CTRL, raw);
   }
 
   [[nodiscard]] uint8_t reset()
   {
-    writeRegister(LTR390Reg::MAIN_CTRL, 0x10);
+    (void)writeRegister(LTR390Reg::MAIN_CTRL, 0x10);
     delay(100);
     return readRegister(LTR390Reg::MAIN_CTRL);
   }
@@ -155,7 +155,7 @@ public:
     if (gain > 4)
       gain = 4;
 
-    writeRegister(LTR390Reg::GAIN, gain);
+    (void)writeRegister(LTR390Reg::GAIN, gain);
     _gain = gainTable[gain];
     return gain;
   }
@@ -176,7 +176,7 @@ public:
       return false;
 
     uint16_t value = (resolution << 4) | time;
-    writeRegister(LTR390Reg::ALS_UVS_MEAS_RATE, value);
+    (void)writeRegister(LTR390Reg::ALS_UVS_MEAS_RATE, value);
 
     _time = 2.000; // time = 6 0r 7
     if (time == 0)
@@ -219,99 +219,83 @@ public:
     return _UVsensitivity;
   }
 
+
+  //////////////////////////////////////////////
+  //
+  //  WARNING: VERY EXPERIMENTAL
   //
   //  Code below this line is not tested yet.
   //  Use carefully, feel free to experiment.
   //  Please let me know if it works or not.
   //
+  //////////////////////////////////////////////
+  //
+  //  ENABLE
+  //
+  void enable()
+  {
+    uint8_t raw = readRegister(LTR390Reg::MAIN_CTRL);
+    raw |=0x02;
+    (void) writeRegister(LTR390Reg::MAIN_CTRL, raw);
+  }
 
-  /*
-    void enable()
-    {
-      uint8_t raw = readRegister(LTR390Reg::MAIN_CTRL);
-      raw != 0x02;
-      writeRegister(LTR390Reg::MAIN_CTRL, raw);
-    }
-
-    void disable()
-    {
-      uint8_t raw = readRegister(LTR390Reg::MAIN_CTRL);
-      raw &= ~0x02;
-      writeRegister(LTR390Reg::MAIN_CTRL, raw);
-    }
-  */
-
-  /*
-    //////////////////////////////////////////////
-    //
-    //  MAIN STATUS
-    //
-    [[nodiscard]] uint8_t getStatus()
-    {
-      uint8_t reg = readRegister(LTR390Reg::MAIN_STATUS);  ? no such register.
-      return reg & 0x38;
-    }
+  void disable()
+  {
+    uint8_t raw = readRegister(LTR390Reg::MAIN_CTRL);
+    raw &= ~0x02;
+    (void) writeRegister(LTR390Reg::MAIN_CTRL, raw);
+  }
 
 
-    //////////////////////////////////////////////
-    //
-    //  INTERRUPT
-    //
-    [[nodiscard]] int setInterruptConfig(uint8_t value = 0x10)
-    {
-      return writeRegister(LTR390Reg::INT_CFG, value);
-    }
+  //////////////////////////////////////////////
+  //
+  //  INTERRUPT
+  //
+  [[nodiscard]] int setInterruptConfig(uint8_t value = 0x10)
+  {
+    return writeRegister(LTR390Reg::INT_CONFIG, value);
+  }
 
-    [[nodiscard]] uint8_t getInterruptConfig()
-    {
-      return readRegister(LTR390Reg::INT_CFG);
-    }
-
-    [[nodiscard]] int setInterruptPersist(uint8_t value = 0x00)
-    {
-      return writeRegister(LTR390Reg::INT_PST, value);
-    }
-
-    [[nodiscard]] uint8_t getInterruptPersist()
-    {
-      return readRegister(LTR390Reg::INT_PST);
-    }
+  [[nodiscard]] uint8_t getInterruptConfig()
+  {
+    return readRegister(LTR390Reg::INT_CONFIG);
+  } 
 
 
-    //////////////////////////////////////////////
-    //
-    //  THRESHOLD
-    //
-    //  note registers are 16 bit.
-    //
-    void setHighThreshold(uint32_t value = 0x000FFFFF)
-    {
-      writeRegister(LTR390Reg::ALS_UVS_THRES_UP_0, value & 0xFFFF);
-      writeRegister(LTR390Reg::ALS_UVS_THRES_UP_1, value >> 16);
-    }
+  //////////////////////////////////////////////
+  //
+  //  THRESHOLD
+  //
+  void setHighThreshold(uint32_t value = 0x000FFFFF)
+  {
+    (void) writeRegister(LTR390Reg::ALS_UVS_THRES_UP_0, value & 0xFFFF);
+    (void) writeRegister(LTR390Reg::ALS_UVS_THRES_UP_1, value >> 16);
+  }
 
-    [[nodiscard]] uint32_t getHighThreshold()
-    {
-      uint32_t value = readRegister(LTR390Reg::ALS_UVS_THRES_UP_1) << 16;
-      value += readRegister(LTR390Reg::ALS_UVS_THRES_UP_0);
-      return value;
-    }
+  [[nodiscard]] uint32_t getHighThreshold()
+  {
+    uint32_t value = readRegister(LTR390Reg::ALS_UVS_THRES_UP_1);
+    value <<= 16;
+    value |= readRegister(LTR390Reg::ALS_UVS_THRES_UP_0);
+    return value;
+  }
 
-    void setLowThreshold(uint32_t value = 0)
-    {
-      writeRegister(LTR390Reg::ALS_UVS_THRES_LOW_0, value & 0xFFFF);
-      writeRegister(LTR390Reg::ALS_UVS_THRES_LOW_1, value >> 16);
-    }
+  void setLowThreshold(uint32_t value = 0)
+  {
+    (void) writeRegister(LTR390Reg::ALS_UVS_THRES_LOW_0, value & 0xFFFF);
+    (void) writeRegister(LTR390Reg::ALS_UVS_THRES_LOW_1, value >> 16);
+  }
 
-    [[nodiscard]] uint32_t getLowThreshold()
-    {
-      uint32_t value = readRegister(LTR390Reg::ALS_UVS_THRES_LOW_1) << 16;
-      value += readRegister(LTR390Reg::ALS_UVS_THRES_LOW_0);
-      return value;
-    }
-  */
+  [[nodiscard]] uint32_t getLowThreshold()
+  {
+    uint32_t value = readRegister(LTR390Reg::ALS_UVS_THRES_LOW_1);
+    value <<= 16;
+    value |= readRegister(LTR390Reg::ALS_UVS_THRES_LOW_0);
+    return value;
+  }
 
   //  END OF PUBLIC PART
+
 
   //////////////////////////////////////////////
   //
