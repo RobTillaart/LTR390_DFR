@@ -149,7 +149,7 @@ public:
   //
   //  MEASUREMENT CONFIGURATION
   //
-  uint8_t setGain(uint8_t gain = 1)
+  [[nodiscard]] uint8_t setGain(uint8_t gain = 1)
   {
     constexpr uint8_t gainTable[] = {1, 3, 6, 9, 18};    
     if (gain > 4)
@@ -246,7 +246,7 @@ public:
     //
     //  MAIN STATUS
     //
-    uint8_t getStatus()
+    [[nodiscard]] uint8_t getStatus()
     {
       uint8_t reg = readRegister(LTR390Reg::MAIN_STATUS);  ? no such register.
       return reg & 0x38;
@@ -257,22 +257,22 @@ public:
     //
     //  INTERRUPT
     //
-    int setInterruptConfig(uint8_t value = 0x10)
+    [[nodiscard]] int setInterruptConfig(uint8_t value = 0x10)
     {
       return writeRegister(LTR390Reg::INT_CFG, value);
     }
 
-    uint8_t getInterruptConfig()
+    [[nodiscard]] uint8_t getInterruptConfig()
     {
       return readRegister(LTR390Reg::INT_CFG);
     }
 
-    int setInterruptPersist(uint8_t value = 0x00)
+    [[nodiscard]] int setInterruptPersist(uint8_t value = 0x00)
     {
       return writeRegister(LTR390Reg::INT_PST, value);
     }
 
-    uint8_t getInterruptPersist()
+    [[nodiscard]] uint8_t getInterruptPersist()
     {
       return readRegister(LTR390Reg::INT_PST);
     }
@@ -290,7 +290,7 @@ public:
       writeRegister(LTR390Reg::ALS_UVS_THRES_UP_1, value >> 16);
     }
 
-    uint32_t getHighThreshold()
+    [[nodiscard]] uint32_t getHighThreshold()
     {
       uint32_t value = readRegister(LTR390Reg::ALS_UVS_THRES_UP_1) << 16;
       value += readRegister(LTR390Reg::ALS_UVS_THRES_UP_0);
@@ -303,7 +303,7 @@ public:
       writeRegister(LTR390Reg::ALS_UVS_THRES_LOW_1, value >> 16);
     }
 
-    uint32_t getLowThreshold()
+    [[nodiscard]] uint32_t getLowThreshold()
     {
       uint32_t value = readRegister(LTR390Reg::ALS_UVS_THRES_LOW_1) << 16;
       value += readRegister(LTR390Reg::ALS_UVS_THRES_LOW_0);
