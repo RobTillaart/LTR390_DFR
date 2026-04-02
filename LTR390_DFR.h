@@ -10,7 +10,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-const __FlashStringHelper *LTR390_DFR_LIB_VERSION = F("0.1.2");
+#define LTR390_DFR_LIB_VERSION (F("0.1.2"))
 
 //  LTR390 ERROR CODES
 constexpr uint8_t LTR390_OK = 0x00;
