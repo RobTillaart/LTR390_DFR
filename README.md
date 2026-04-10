@@ -146,6 +146,15 @@ between 0..1. Returns false if the parameter s is out of range.
 - **uint8_t getPartID()** returns 11.
 - **uint8_t getRevisionID()** returns 2.
 
+### Compiler Warnings (Arduino IDE)
+This library uses [[nodiscard]] to help detect ignored return values.<br>
+However, Arduino IDE disables compiler warnings by default.<br>
+To benefit from this feature, enable warnings:
+
+>File > Preferences > Compiler warnings > Default (or higher)
+
+### PlatformIO
+Warnings are enabled by default, no additional configuration required.
 
 ### Get data
 
