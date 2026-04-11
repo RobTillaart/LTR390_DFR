@@ -220,10 +220,11 @@ Not tested, to be elaborated (someday)
 - **int lastError()** returns last low level I2C status.
 Value LTR390_OK == 0 default.
 
-|  value  |  meaning  |
-|:-------:|:----------|
-|    0    |  OK, default value.
-|  other  |  I2C errors, board specific.
+|  value  |  constant            |  meaning  |
+|:-------:|:---------------------|:----------|
+|    0    |  LTR390_OK           |  default value.
+|   -10   |  LTR390_I2C_REQUEST  |
+|  other  |                      |  I2C errors, board specific.
 
 
 ## Future

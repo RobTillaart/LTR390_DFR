@@ -15,7 +15,9 @@
 
 
 //  LTR390 ERROR CODES
-constexpr uint8_t LTR390_OK = 0x00;
+constexpr int LTR390_OK = 0;
+constexpr int LTR390_I2C_REQUEST = -10;
+
 
 //  DF_ROBOTICS LTR390 REGISTERS (16 bits)
 namespace LTR390Reg
@@ -319,34 +321,33 @@ public:
     _wire->write(reg);
     _wire->write(value & 0xFF);
     _wire->write(value >> 8);
-    int n = _wire->endTransmission();
-    if (n != 0)
+    _error = _wire->endTransmission();
+    if (_error != 0)
     {
-      //  _error = LTR390Reg::I2C_ERROR;
-      //  Serial.print("write:\t");
-      //  Serial.println(n);
+      //  Serial.print("writeRegister:\t");
+      //  Serial.println(_error);
     }
-    return n;
+    return _error;
   }
 
   [[nodiscard]] uint16_t readRegister(uint8_t reg)
   {
     _wire->beginTransmission(_address);
     _wire->write(reg);
-    int n = _wire->endTransmission();
-    if (n != 0)
+    _error = _wire->endTransmission();
+    if (_error != 0)
     {
-      //  _error = LTR390Reg::I2C_ERROR;
-      //  Serial.print("read:\t");
-      //  Serial.println(n);
-      return n;
+      //  Serial.print("readRegister:\t");
+      //  Serial.println(_error);
+      return _error;
     }
 
-    n = _wire->requestFrom(_address, (uint8_t)2);
+    int n = _wire->requestFrom(_address, (uint8_t)2);
     if (n != 2)
     {
       //  Serial.print("requestFrom: \t");
       //  Serial.print(n);
+      _error = LTR390_I2C_REQUEST;
       return n;
     }
     uint16_t data = _wire->read();
