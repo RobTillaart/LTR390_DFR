@@ -7,10 +7,12 @@
 // PURPOSE: Arduino library for the I2C LTR390 UV sensor (DF Robotics edition).
 //     URL: https://github.com/RobTillaart/LTR390_DFR
 
+
 #include <Arduino.h>
 #include <Wire.h>
 
 #define LTR390_DFR_LIB_VERSION (F("0.2.0"))
+
 
 //  LTR390 ERROR CODES
 constexpr uint8_t LTR390_OK = 0x00;
@@ -46,10 +48,11 @@ class LTR390_DFR
 public:
   explicit LTR390_DFR(TwoWire *wire = &Wire):
     _wire(wire),
-    _address(0x1C), //  Fixed 0x1C = 28 = DF_ROBOTICS
-    _gain(3.0f), //  default
-    _time(0.1f), //  default 18 bit, 100 ms.
-    _UVsensitivity(1.0f)
+    _address(0x1C),  //  0x1C == 28 ==> DF_ROBOTICS
+    _gain(3.0f),     //  default
+    _time(0.1f),     //  default 18 bit, 100 ms.
+    _UVsensitivity(1.0f),
+    _error(LTR390_OK) 
   {}
 
   [[nodiscard]] bool begin()
@@ -121,11 +124,11 @@ public:
   }
 
   //  page 22 datasheet
-  [[nodiscard]] float getLux(float wfac = 1)
+  [[nodiscard]] float getLux(float wFactor = 1.0f)
   {
     float lux = 0.6f * getALSData() / (_gain * _time);
-    if (wfac > 1)
-      lux *= wfac;
+    if (wFactor > 1.0f)
+      lux *= wFactor;
     return lux;
   }
 
@@ -151,7 +154,7 @@ public:
   //
   [[nodiscard]] uint8_t setGain(uint8_t gain = 1)
   {
-    constexpr uint8_t gainTable[] = {1, 3, 6, 9, 18};    
+    constexpr uint8_t gainTable[] = {1, 3, 6, 9, 18};
     if (gain > 4)
       gain = 4;
 
@@ -178,19 +181,10 @@ public:
     uint16_t value = (resolution << 4) | time;
     (void)writeRegister(LTR390Reg::ALS_UVS_MEAS_RATE, value);
 
-    _time = 2.000; // time = 6 0r 7
-    if (time == 0)
-      _time = 0.025f;
-    if (time == 1)
-      _time = 0.050f;
-    if (time == 2)
-      _time = 0.100f;
-    if (time == 3)
-      _time = 0.200f;
-    if (time == 4)
-      _time = 0.500f;
-    if (time == 5)
-      _time = 1.000f;
+    constexpr float timeTable[] = {
+      0.025f, 0.05f, 0.1f, 0.2f, 0.5f, 1.0f, 2.0f, 2.0f
+      };
+    _time = timeTable[time];
     return true;
   }
 
@@ -206,11 +200,11 @@ public:
     return reg & 0x07;
   }
 
-  [[nodiscard]] bool setUVsensitivity(float s)
+  [[nodiscard]] bool setUVsensitivity(float sensitivity = 1.0f)
   {
-    if ((s <= 0.0f) || (s > 1.0f))
+    if ((sensitivity <= 0.0f) || (sensitivity > 1.0f))
       return false;
-    _UVsensitivity = s;
+    _UVsensitivity = sensitivity;
     return true;
   }
 
@@ -246,6 +240,11 @@ public:
     (void) writeRegister(LTR390Reg::MAIN_CTRL, raw);
   }
 
+  [[nodiscard]] bool isEnabled()
+  {
+    uint8_t raw = readRegister(LTR390Reg::MAIN_CTRL);
+    return (raw & 0x02) == 0x02;
+  }
 
   //////////////////////////////////////////////
   //
@@ -259,7 +258,7 @@ public:
   [[nodiscard]] uint8_t getInterruptConfig()
   {
     return readRegister(LTR390Reg::INT_CONFIG);
-  } 
+  }
 
 
   //////////////////////////////////////////////
@@ -293,6 +292,19 @@ public:
     value |= readRegister(LTR390Reg::ALS_UVS_THRES_LOW_0);
     return value;
   }
+
+
+  //////////////////////////////////////////////
+  //
+  //  THRESHOLD
+  //
+  [[nodiscard]] int lastError()
+  {
+    int e = _error;
+    _error = LTR390_OK;
+    return e;
+  }
+
 
   //  END OF PUBLIC PART
 
@@ -349,6 +361,7 @@ private:
   float _gain;
   float _time;
   float _UVsensitivity;
+  int   _error;
 };
 
 //  -- END OF FILE --

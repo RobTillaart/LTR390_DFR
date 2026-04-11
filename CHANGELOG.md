@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.0] - 2026-04-01
+
 ### Added
 - [[nodiscard]] attribute to critical methods to prevent ignored return values
 
@@ -21,14 +22,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed potential overflow when assembling 32-bit ALS/UVS data from 16-bit registers
 
 ## [0.2.0] - 2026-04-02
-- fix #  , major refactor, kudos to Chris0xdeadbeef
-- update examples
-- minor edits
-
-----
-
-## [0.2.0] - 2026-04-02
-- fix #  , major refactor, kudos to Chris0xdeadbeef
+- merged #6,#8,#10 major refactor, kudos to Chris0xdeadbeef
+- add **void enable()**, **void disable()**, **bool isEnabled()**
+- add **int lastError()** to read last I2C low level error (experimental)
+- update readme.md
+- update keywords.txt
 - update examples
 - minor edits
 
